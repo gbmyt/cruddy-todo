@@ -43,19 +43,18 @@ const writeCounter = (count, callback) => {
 // write updated count back to our file
 
 exports.getNextUniqueId = (callback) => {
-  // console.log('data', callback);
+  readCounter((err, data) => {
+    if (err) {
+      console.log('read err', err);
+    }
 
-  // work back from small doom pyramid?
-  readCounter(); // err, cb (we define)
-
-  counter = counter + 1;
-  writeCounter(counter, () => {});
-
-  // readCounter((data1, data2) => {
-  //   console.log(data2);
-  // });
-  callback(null, counter);
-  // return zeroPaddedNumber(counter);
+    writeCounter(counter = data + 1, (err, counter) => {
+      if (err) {
+        console.log('write err', err);
+      }
+      callback(null, counter);
+    });
+  });
 };
 
 // Configuration -- DO NOT MODIFY //////////////////////////////////////////////
