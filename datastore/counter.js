@@ -38,12 +38,25 @@ const writeCounter = (count, callback) => {
 
 // Public API - Fix this function //////////////////////////////////////////////
 
-exports.getNextUniqueId = () => {
+// first read counter from our counter text file
+// modify counter
+// write updated count back to our file
+
+exports.getNextUniqueId = (callback) => {
+  // console.log('data', callback);
+
+  // work back from small doom pyramid?
+  readCounter(); // err, cb (we define)
+
   counter = counter + 1;
-  return zeroPaddedNumber(counter);
+  writeCounter(counter, () => {});
+
+  // readCounter((data1, data2) => {
+  //   console.log(data2);
+  // });
+  callback(null, counter);
+  // return zeroPaddedNumber(counter);
 };
-
-
 
 // Configuration -- DO NOT MODIFY //////////////////////////////////////////////
 
