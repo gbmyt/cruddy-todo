@@ -55,7 +55,7 @@ exports.getNextUniqueId = (callback) => {
       callback(null, counter);
     });
   });
-};
+}; //
 
 // Configuration -- DO NOT MODIFY //////////////////////////////////////////////
 
