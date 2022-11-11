@@ -31,9 +31,18 @@ exports.create = (text, callback) => {
 };
 
 exports.readAll = (callback) => {
-  var data = _.map(items, (text, id) => {
-    return { id, text };
+  // var data = _.map(items, (text, id) => {
+  //   return { id, text };
+  // });
+
+  var fileNames = fs.readdirSync(exports.dataDir);
+
+  var data = _.map(fileNames, (text, index) => {
+    // console.log('text', text.replace('.txt', ''), 'index', index);
+    return {'id': text.replace('.txt', ''), 'text': text.replace('.txt', '')};
   });
+
+  // console.log('Read Dir Log', data);
   callback(null, data);
 };
 
