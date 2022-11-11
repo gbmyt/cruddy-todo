@@ -14,23 +14,20 @@ exports.create = (text, callback) => {
     // console.log('get unique inner cb', id);
     items['id'] = id;
     items['text'] = text;
-    // {0001: 'asdfioajsdiof'}
-    // {id: 0001, text: 'asdfjhaoisdjf'}
+
+    // console.log('Item ID', items.id);
+
+    var uniquePath = path.join(exports.dataDir, `/${items.id}.txt`);
+
+    fs.writeFile(uniquePath, text, (err) => {
+      if (err) {
+        console.log('write err', err);
+        callback(err);
+      } else {
+        callback(null, { id: items.id, text: text });
+      }
+    });
   });
-
-  console.log('Items Obj', items);
-
-  // Create new files for each todo
-  var uniquePath = path.join(exports.dataDir, `/${items.id}.txt`);
-  // console.log('uniquePath', uniquePath);
-
-  fs.writeFile(uniquePath, text, (err) => {
-    if (err) {
-      console.log('write err', err);
-      callback(err);
-    }
-  });
-  callback(null, { id: items.id, text: text });
 };
 
 exports.readAll = (callback) => {
