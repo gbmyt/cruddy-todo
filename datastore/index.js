@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('underscore');
 const counter = require('./counter');
-console.log('counter func', counter);
 
 var items = {};
 exports.dataDir = path.join(__dirname, 'data');
@@ -47,11 +46,22 @@ exports.readAll = (callback) => {
 };
 
 exports.readOne = (id, callback) => {
-  var text = items[id];
-  if (!text) {
+  var paddedNum = items['id'];
+  var text = '';
+  // console.log('text', text + '.txt');
+
+  if (!paddedNum) {
     callback(new Error(`No item with id: ${id}`));
   } else {
-    callback(null, { id, text });
+    var pathName = path.join(exports.dataDir, paddedNum + '.txt');
+
+    fs.readFile(pathName, (err, data) => {
+      if (err) {
+        callback(err);
+      } else {
+        callback(null, { 'id': id, 'text': data.toString() });
+      }
+    });
   }
 };
 
