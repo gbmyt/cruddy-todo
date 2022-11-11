@@ -38,7 +38,7 @@ exports.readAll = (callback) => {
 
   var data = _.map(fileNames, (text, index) => {
     // console.log('text', text.replace('.txt', ''), 'index', index);
-    return {'id': text.replace('.txt', ''), 'text': text.replace('.txt', '')};
+    return { 'id': text.replace('.txt', ''), 'text': text.replace('.txt', '') };
   });
 
   // console.log('Read Dir Log', data);
@@ -48,7 +48,6 @@ exports.readAll = (callback) => {
 exports.readOne = (id, callback) => {
   var paddedNum = items['id'];
   var text = '';
-  // console.log('text', text + '.txt');
 
   if (!paddedNum) {
     callback(new Error(`No item with id: ${id}`));
@@ -65,13 +64,50 @@ exports.readOne = (id, callback) => {
   }
 };
 
+// exports.update = (id, text, callback) => {
+//   var item = items['id'];
+
+//   if (!item) {
+//     callback(new Error(`No item with id: ${id}`));
+//   } else {
+//     var filePath = path.join(exports.dataDir, id + '.txt');
+
+//     fs.writeFile(filePath, text, (err, data) => {
+//       if (err) {
+//         callback(err);
+//       } else {
+//         callback({ id, text });
+//       }
+//     });
+//   }
+// };
+
+
+// First pass .update refactor (passes test suite)
 exports.update = (id, text, callback) => {
-  var item = items[id];
+  var item = items['id'];
+  // console.log('item', item, 'items', items, 'text', text);
+
   if (!item) {
     callback(new Error(`No item with id: ${id}`));
   } else {
-    items[id] = text;
-    callback(null, { id, text });
+    // items['text'] = text;
+    var filePath = path.join(exports.dataDir, id + '.txt');
+
+    fs.readFile(filePath, (err, data) => {
+      if (err) {
+        console.log('Hi :)');
+        callback(err);
+      } else {
+        fs.writeFile(filePath, text, (err, data) => {
+          if (err) {
+            callback(err);
+          } else {
+            callback({ id, text });
+          }
+        });
+      }
+    });
   }
 };
 
@@ -95,3 +131,5 @@ exports.initialize = () => {
     fs.mkdirSync(exports.dataDir);
   }
 };
+
+
