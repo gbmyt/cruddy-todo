@@ -2,20 +2,35 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('underscore');
 const counter = require('./counter');
+console.log('counter func', counter);
 
 var items = {};
+exports.dataDir = path.join(__dirname, 'data');
 
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
 exports.create = (text, callback) => {
-  var id = counter.getNextUniqueId();
-  items[id] = text;
+  counter.getNextUniqueId((err, id) => {
+    // console.log('get unique inner cb', id);
+    items['id'] = id;
+    items['text'] = text;
+    // {0001: 'asdfioajsdiof'}
+    // {id: 0001, text: 'asdfjhaoisdjf'}
+  });
 
-  // We were in the middle of figuring out how to create new files for each todo
-//Hhehe hi ...omg how did you get in here?! lol
-  // var uniquePath = path.join(__dirname, `data/${id}.txt`);
-  // fs.writeFile(uniquePath, )
-  callback(null, { id, text });
+  console.log('Items Obj', items);
+
+  // Create new files for each todo
+  var uniquePath = path.join(exports.dataDir, `/${items.id}.txt`);
+  // console.log('uniquePath', uniquePath);
+
+  fs.writeFile(uniquePath, text, (err) => {
+    if (err) {
+      console.log('write err', err);
+      callback(err);
+    }
+  });
+  callback(null, { id: items.id, text: text });
 };
 
 exports.readAll = (callback) => {
@@ -57,7 +72,7 @@ exports.delete = (id, callback) => {
 
 // Config+Initialization code -- DO NOT MODIFY /////////////////////////////////
 
-exports.dataDir = path.join(__dirname, 'data');
+// exports.dataDir = path.join(__dirname, 'data');
 
 exports.initialize = () => {
   if (!fs.existsSync(exports.dataDir)) {

@@ -46,11 +46,13 @@ exports.getNextUniqueId = (callback) => {
   readCounter((err, data) => {
     if (err) {
       console.log('read err', err);
+      callback(err);
     }
 
     writeCounter(counter = data + 1, (err, counter) => {
       if (err) {
         console.log('write err', err);
+        callback(err);
       }
       callback(null, counter);
     });
