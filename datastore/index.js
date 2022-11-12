@@ -2,29 +2,24 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('underscore');
 const counter = require('./counter');
+var Promise = require('bluebird');
+// const readdir = Promise.promisify(fs.readdir);
 
-var items = []; // { id: 00001, text: 'str' }
+var items = [];
 var itemsTest = items;
 exports.itemsTest = itemsTest;
 
-// items = [
-//   { id: '00001', text: 'todo 1' },
-//   { id: '00002', text: 'todo 2' }
-// ]
 exports.dataDir = path.join(__dirname, 'data');
 
 // Public API - Fix these CRUD functions /////////////////////////////////////
 
 exports.create = (text, callback) => {
   counter.getNextUniqueId((err, id) => {
-    // console.log('get unique inner cb', id);
     var todo = {
       'id': id,
       'text': text
     };
     items.push(todo);
-
-    // console.log('Item ID', items.id);
 
     var uniquePath = path.join(exports.dataDir, `/${id}.txt`);
 
@@ -40,25 +35,45 @@ exports.create = (text, callback) => {
 };
 
 exports.readAll = (callback) => {
-  // var data = _.map(items, (text, id) => {
-  //   return { id, text };
-  // });
-
   fs.readdir(exports.dataDir, (err, fileNames) => {
     if (err) {
       callback(err);
     } else {
 
       var data = _.map(fileNames, (id, index) => {
-        // console.log('text', text.replace('.txt', ''), 'index', index);
-        return { 'id': id.replace('.txt', ''), 'text': items[index].text };
+        return {
+          'id': id.replace('.txt', ''),
+          'text': items[index].text
+        };
       });
 
-      // console.log('Read Dir Log', data);
-      callback(null, data);
+      Promise.all(data).then(data => {
+        callback(null, data);
+      });
     }
   });
 };
+
+// exports.readAll = (callback) => {
+//   var promise = new Promise((resolve, reject) => {
+//     fs.readdir(exports.dataDir, (err, data) => {
+//       if (err) {
+//         reject(err);
+//       } else {
+//         resolve(data);
+//       }
+//     });
+//   });
+
+//   Promise.all(promise).then((fileNames) => {
+//     var data = _.map(fileNames, (id, index) => {
+//       return { 'id': id.replace('.txt', ''), 'text': items[index].text };
+//     });
+//     // return data; // return here? resolve??
+//     callback(null, data);
+//   });
+//   return promise;
+// };
 
 exports.readOne = (id, callback) => {
   var paddedNum = id;
@@ -135,5 +150,3 @@ exports.initialize = () => {
     fs.mkdirSync(exports.dataDir);
   }
 };
-
-
