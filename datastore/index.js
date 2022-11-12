@@ -4,6 +4,13 @@ const _ = require('underscore');
 const counter = require('./counter');
 
 var items = {};
+var itemsTest = items;
+exports.itemsTest = itemsTest;
+
+// items = {
+//   { id: '00001', text: 'todo 1' },
+//   { id: '00002', text: 'todo 2' }
+// }
 exports.dataDir = path.join(__dirname, 'data');
 
 // Public API - Fix these CRUD functions ///////////////////////////////////////
@@ -47,7 +54,8 @@ exports.readAll = (callback) => {
 
 exports.readOne = (id, callback) => {
   var paddedNum = items['id'];
-  var text = '';
+  console.log('items', items);
+  console.log('paddedNum', paddedNum);
 
   if (!paddedNum) {
     callback(new Error(`No item with id: ${id}`));

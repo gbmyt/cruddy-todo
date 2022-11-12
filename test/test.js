@@ -70,7 +70,6 @@ describe('todos', () => {
     it('should create a new file for each todo', (done) => {
       todos.create('todo1', (err, data) => {
         const todoCount = fs.readdirSync(todos.dataDir).length;
-        // console.log('Spec data log', todos.dataDir);
         expect(todoCount).to.equal(1);
         todos.create('todo2', (err, data) => {
           expect(fs.readdirSync(todos.dataDir)).to.have.lengthOf(2);
@@ -105,6 +104,19 @@ describe('todos', () => {
         done();
       });
     });
+
+    it('should save multiple todos to internal storage', (done) => {
+      var todoOne = 'First todo';
+      var todoTwo = 'Second todo';
+
+      todos.create(todoOne, (err, todo) => {
+        todos.create(todoTwo, (err, todo) => {
+          console.log('first item', todos.itemsTest);
+          expect(Object.keys(todos.itemsTest).length).toEqual(2);
+          // expect(todos.itemsTest['00001']).toEqual('First todo'); // { id: zpn, text: text string}
+        });
+      });
+    });
   });
 
   describe('readAll', () => {
@@ -120,7 +132,8 @@ describe('todos', () => {
     it('should return an array with all saved todos', (done) => {
       const todo1text = 'todo 1';
       const todo2text = 'todo 2';
-      const expectedTodoList = [{ id: '00001', text: '00001' }, { id: '00002', text: '00002' }];
+      const expectedTodoList = [{ id: '00001', text: 'todo 1' }, { id: '00002', text: 'todo 2' }];
+      // const expectedTodoList = [{ id: '00001', text: '00001' }, { id: '00002', text: '00002' }];
       todos.create(todo1text, (err, todo) => {
         todos.create(todo2text, (err, todo) => {
           todos.readAll((err, todoList) => {
